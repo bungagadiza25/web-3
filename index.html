@@ -1,0 +1,314 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ForestGuard - Pemantauan Hutan</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f0f4f1;
+    color: #24372b;
+}
+
+header {
+    background: #174c35;
+    color: white;
+    padding: 24px;
+    text-align: center;
+}
+
+header p {
+    color: #d8eadf;
+}
+
+main {
+    max-width: 950px;
+    margin: auto;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 18px;
+    box-shadow: 0 3px 12px #0000000c;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.stat {
+    background: #e7f1e9;
+    padding: 16px;
+    border-radius: 10px;
+}
+
+.stat strong {
+    display: block;
+    font-size: 25px;
+    margin-top: 8px;
+    color: #205d3c;
+}
+
+label {
+    display: block;
+    margin-top: 12px;
+    font-weight: bold;
+}
+
+input, select {
+    width: 100%;
+    padding: 11px;
+    margin-top: 6px;
+    border: 1px solid #cbd5ce;
+    border-radius: 6px;
+}
+
+button {
+    padding: 11px 16px;
+    margin-top: 14px;
+    background: #216443;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #174c35;
+}
+
+.alert {
+    border-left: 4px solid #d58b26;
+    padding: 12px;
+    background: #fff6e6;
+    margin-top: 12px;
+    border-radius: 5px;
+}
+
+.badge {
+    display: inline-block;
+    background: #fce8c9;
+    color: #80500d;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #637268;
+}
+
+@media (max-width: 600px) {
+    .stats {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>ForestGuard</h1>
+    <p>Sistem Pemantauan dan Peringatan Dini Kerusakan Hutan</p>
+    <small>Satellite Imagery & Artificial Intelligence</small>
+</header>
+
+<main>
+
+<section class="card">
+    <h2>Dashboard Pemantauan</h2>
+    <p>
+        Sistem simulasi untuk memantau perubahan tutupan
+        hutan dan mengelompokkan dugaan penyebabnya.
+    </p>
+
+    <div class="stats">
+        <div class="stat">
+            Total Laporan
+            <strong id="total">3</strong>
+        </div>
+        <div class="stat">
+            Prioritas Tinggi
+            <strong id="tinggi">1</strong>
+        </div>
+        <div class="stat">
+            Perlu Verifikasi
+            <strong id="verifikasi">3</strong>
+        </div>
+    </div>
+</section>
+
+<section class="card">
+    <h2>Filter Laporan</h2>
+    <label for="filter">Dugaan penyebab perubahan</label>
+    <select id="filter" onchange="tampilkanLaporan()">
+        <option value="Semua">Semua kategori</option>
+        <option value="Pertanian">Pertanian</option>
+        <option value="Penebangan">Penebangan</option>
+        <option value="Pertambangan">Pertambangan</option>
+        <option value="Kebakaran">Kebakaran</option>
+        <option value="Belum diketahui">Belum diketahui</option>
+    </select>
+
+    <div id="daftar"></div>
+</section>
+
+<section class="card">
+    <h2>Tambah Laporan Simulasi</h2>
+
+    <label for="lokasi">Nama lokasi</label>
+    <input id="lokasi" placeholder="Contoh: Area Hutan A">
+
+    <label for="penyebab">Dugaan penyebab</label>
+    <select id="penyebab">
+        <option>Pertanian</option>
+        <option>Penebangan</option>
+        <option>Pertambangan</option>
+        <option>Kebakaran</option>
+        <option>Belum diketahui</option>
+    </select>
+
+    <label for="prioritas">Prioritas pemeriksaan</label>
+    <select id="prioritas">
+        <option>Tinggi</option>
+        <option>Sedang</option>
+        <option>Rendah</option>
+    </select>
+
+    <button onclick="tambahLaporan()">
+        Tambahkan Laporan
+    </button>
+
+    <p id="pesan" aria-live="polite"></p>
+</section>
+
+<section class="card">
+    <h2>Peran AI dan Citra Satelit</h2>
+    <p>
+        Citra satelit digunakan untuk mengamati perubahan
+        tutupan hutan. AI dapat membantu mengidentifikasi
+        perubahan dan memperkirakan penyebabnya, seperti
+        pertanian, penebangan, pertambangan, atau kebakaran.
+    </p>
+    <p>
+        Pada sistem nyata, data satelit diproses oleh model
+        AI yang telah dilatih. Hasilnya dikirim ke dashboard
+        melalui server atau API untuk ditindaklanjuti.
+    </p>
+    <p>
+        Catatan: data dalam website ini hanya simulasi,
+        bukan hasil pengamatan satelit sungguhan.
+    </p>
+</section>
+
+</main>
+
+<footer>
+    Studi Kasus Informatika | ForestGuard
+</footer>
+
+<script>
+const laporan = [
+    {
+        lokasi: "Area Hutan A",
+        penyebab: "Pertanian",
+        prioritas: "Tinggi"
+    },
+    {
+        lokasi: "Area Hutan B",
+        penyebab: "Penebangan",
+        prioritas: "Sedang"
+    },
+    {
+        lokasi: "Area Hutan C",
+        penyebab: "Belum diketahui",
+        prioritas: "Rendah"
+    }
+];
+
+function tampilkanLaporan() {
+    const daftar = document.getElementById("daftar");
+    const filter = document.getElementById("filter").value;
+
+    daftar.replaceChildren();
+
+    const hasil = laporan.filter(item =>
+        filter === "Semua" || item.penyebab === filter
+    );
+
+    if (hasil.length === 0) {
+        daftar.textContent = "Tidak ada laporan pada kategori ini.";
+    }
+
+    hasil.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "alert";
+
+        const judul = document.createElement("strong");
+        judul.textContent = item.lokasi;
+
+        const detail = document.createElement("p");
+        detail.textContent =
+            "Dugaan penyebab: " + item.penyebab;
+
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.textContent = "Prioritas " + item.prioritas;
+
+        const status = document.createElement("p");
+        status.textContent = "Status: Perlu verifikasi lapangan";
+
+        card.append(judul, detail, badge, status);
+        daftar.appendChild(card);
+    });
+
+    document.getElementById("total").textContent =
+        laporan.length;
+
+    document.getElementById("tinggi").textContent =
+        laporan.filter(x => x.prioritas === "Tinggi").length;
+
+    document.getElementById("verifikasi").textContent =
+        laporan.length;
+}
+
+function tambahLaporan() {
+    const lokasi = document.getElementById("lokasi").value.trim();
+    const penyebab = document.getElementById("penyebab").value;
+    const prioritas = document.getElementById("prioritas").value;
+    const pesan = document.getElementById("pesan");
+
+    if (lokasi === "") {
+        pesan.textContent = "Nama lokasi harus diisi.";
+        return;
+    }
+
+    laporan.push({ lokasi, penyebab, prioritas });
+
+    document.getElementById("lokasi").value = "";
+    pesan.textContent = "Laporan simulasi berhasil ditambahkan.";
+
+    tampilkanLaporan();
+}
+
+tampilkanLaporan();
+</script>
+
+</body>
+</html>
